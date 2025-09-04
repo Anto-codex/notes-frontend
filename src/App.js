@@ -11,7 +11,7 @@ function App() {
     <div className="App" style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>Notes App</h1>
       <NoteForm refreshNotes={refreshNotes} />
-      <NotesList key={refresh} />
+      <NotesList key={refresh} refresh={refresh} />
     </div>
   );
 }

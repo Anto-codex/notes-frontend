@@ -2,45 +2,37 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 
-function NotesList() {
+export default function NotesList({ refresh }) {
   const [notes, setNotes] = useState([]);
 
   const fetchNotes = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/notes/`);
-      setNotes(res.data);
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-    }
+    const res = await axios.get(`${API_URL}/notes/`);
+    setNotes(res.data);
   };
 
   const deleteNote = async (id) => {
     try {
       await axios.delete(`${API_URL}/notes/${id}`);
-      fetchNotes(); // Refresh list after deletion
-    } catch (error) {
-      console.error("Error deleting note:", error);
+      fetchNotes(); // Refresh after deletion
+    } catch (err) {
+      console.error("Failed to delete note:", err);
     }
   };
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [refresh]);
 
   return (
     <div>
       <h2>All Notes</h2>
-      {notes.length === 0 && <p>No notes yet.</p>}
-      <ul>
-        {notes.map((note) => (
-          <li key={note.id} style={{ marginBottom: "10px" }}>
-            <strong>{note.title}</strong>: {note.content}{" "}
-            <button onClick={() => deleteNote(note.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      {notes.map((note) => (
+        <div key={note.id} style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}>
+          <p><strong>Title:</strong> {note.title}</p>
+          <p><strong>Content:</strong> {note.content}</p>
+          <button onClick={() => deleteNote(note.id)}>Delete</button>
+        </div>
+      ))}
     </div>
   );
 }
-
-export default NotesList;
