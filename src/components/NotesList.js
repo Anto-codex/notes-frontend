@@ -2,37 +2,58 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 
-export default function NotesList({ refresh }) {
+function NotesList({ key }) {
   const [notes, setNotes] = useState([]);
 
   const fetchNotes = async () => {
-    const res = await axios.get(`${API_URL}/notes/`);
-    setNotes(res.data);
-  };
-
-  const deleteNote = async (id) => {
     try {
-      await axios.delete(`${API_URL}/notes/${id}`);
-      fetchNotes(); // Refresh after deletion
-    } catch (err) {
-      console.error("Failed to delete note:", err);
+      const response = await axios.get(`${API_URL}/notes/`);
+      setNotes(response.data);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
     }
   };
 
   useEffect(() => {
     fetchNotes();
-  }, [refresh]);
+  }, [key]); // refresh when key changes
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/notes/${id}`);
+      fetchNotes(); // refresh after delete
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      alert("Failed to delete note");
+    }
+  };
+
+  if (notes.length === 0) return <p>No notes yet.</p>;
 
   return (
     <div>
-      <h2>All Notes</h2>
       {notes.map((note) => (
-        <div key={note.id} style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}>
-          <p><strong>Title:</strong> {note.title}</p>
-          <p><strong>Content:</strong> {note.content}</p>
-          <button onClick={() => deleteNote(note.id)}>Delete</button>
+        <div
+          key={note.id}
+          style={{
+            border: "1px solid #ccc",
+            padding: "10px",
+            marginBottom: "10px",
+            borderRadius: "4px",
+          }}
+        >
+          <h3>{note.title}</h3>
+          <p>{note.content}</p>
+          <button
+            onClick={() => handleDelete(note.id)}
+            style={{ padding: "4px 8px", background: "red", color: "#fff" }}
+          >
+            Delete
+          </button>
         </div>
       ))}
     </div>
   );
 }
+
+export default NotesList;

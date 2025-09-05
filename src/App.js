@@ -10,8 +10,11 @@ function App() {
   return (
     <div className="App" style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>Notes App</h1>
+      {/* Pass refreshNotes to NoteForm */}
       <NoteForm refreshNotes={refreshNotes} />
-      <NotesList key={refresh} refresh={refresh} />
+      
+      {/* Pass key to NotesList to re-render after changes */}
+      <NotesList key={refresh} />
     </div>
   );
 }
